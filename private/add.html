@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+<head><script src="http://code.jquery.com/jquery-1.9.1.min.js"></script></head>
+<body>
+	<form method="post">
+		<input type='text' name='name' placeholder="name"/><br />
+		<input type='text' name='slug' placeholder="slug"/><br />
+		<input type='text' name='weight'  placeholder="weight"/><br />
+		<input type='checkbox' name='hidden'  placeholder="hidden"/><br />
+		<input type='text' name='category'  placeholder="category"/><br />
+		<textarea name="content"  placeholder="content"></textarea><br />
+		<input type="submit" />
+	</form>
+</body>
+<script>
+function convertToSlug(Text)
+{
+    return Text
+        .toLowerCase()
+        .replace(/ /g,'-')
+        .replace(/[^\w-]+/g,'')
+        ;
+}
+$(document).ready(function(){
+	var slugBox = $('[name="slug"]');
+	$('[name="name"]').keyup(function(){
+		var slug = convertToSlug($(this).val());
+		slugBox.val(slug);
+	});
+
+});
+</script>
+</html>

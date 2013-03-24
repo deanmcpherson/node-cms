@@ -1,0 +1,24 @@
+<!DOCTYPE HTML>
+<html>
+<head><script src="http://code.jquery.com/jquery-1.9.1.min.js"></script></head>
+<body>
+	<h1>ADMIN CONSOLE</h1>
+<script>
+function convertToSlug(Text)
+{
+    return Text
+        .toLowerCase()
+        .replace(/ /g,'-')
+        .replace(/[^\w-]+/g,'')
+        ;
+}
+$(document).ready(function(){
+	var slugBox = $('[name="slug"]');
+	$('[name="name"]').keyup(function(){
+		var slug = convertToSlug($(this).val());
+		slugBox.val(slug);
+	});
+
+});
+</script>
+</html>
