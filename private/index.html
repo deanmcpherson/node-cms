@@ -2,6 +2,7 @@
 <html ng-app="deanApp">
 <head>
     <title>Dean McPherson</title>
+    <meta name="fragment" content="!">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" href="stylesheets/style.css">
     <link rel="stylesheet" href="stylesheets/prism.css">
@@ -13,6 +14,7 @@
     <script type="text/javascript" src="javascripts/prism.js"></script>
 <body>
     <div id="list" ng-controller="FeedCtrl">
+        <input type="file" name="image" /><button id="upload">Upload</button>
         <h1>List</h1>
         <div class="new-panel" ng-show="isAdmin">
             <div ng-click="addMode(true)" ng-hide="adding">Add a new post</div>

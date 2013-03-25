@@ -42,10 +42,13 @@ app.get('/_api/drop_entire_db', checkAuth, routes.drop);
 app.post('/_api/update', checkAuth, routes.update);
 app.post('/_api/add', checkAuth, routes.add);
 app.get('/_api/:id', routes.get);
+app.post('/upload', routes.upload);
 app.get('/auth', routes.auth);
 app.get('/login', routes.loginForm);
 app.post('/login', routes.login);
+app.get('/logout', routes.logout);
 app.get('/:id', routes.static);
+
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });

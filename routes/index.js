@@ -2,9 +2,12 @@
 /*
  * GET home page.
  */
- mongoose = require('mongoose');
+ var mongoose = require('mongoose'),
+ fs = require('fs');
  mongoose.connect('mongodb://localhost/test');
 var db = mongoose.connection;
+
+var md = require("node-markdown").Markdown;
 
 function checkAuth(req, res, next) {
   if (!req.session.user_id) {
@@ -179,16 +182,15 @@ exports.login = function(req, res){
 	}
 }
 
-exports.loginForm = function(req, res) {
-	
-	if (!req.session.user_id) {
-		res.sendfile('private/login.html');
-	} 
-	else
-	{
-		res.redirect(301,'/');
-	}
+exports.logout = function(req, res) {
+		if (req.session.user_id !== undefined) {
+			delete req.session.user_id;
+		}
+		res.send('Logged out.');
+}
 
+exports.loginForm = function(req, res) {
+		res.sendfile('private/login.html');
 }
 
 exports.drop = function(req, res) {
@@ -203,9 +205,37 @@ exports.drop = function(req, res) {
 
 exports.static = function(req, res) {
 	if (req.query !== undefined && req.query._escaped_fragment_ !== undefined) {
-		res.send('crawler');
+		var slug = req.params.id;
+		Article.findOne({'slug':slug}).exec(function(err,docs){
+			if (!err){
+				if (docs){
+					console.log(docs);
+					var html = "<h1>" + docs.name +"</h1>";
+						html += md(docs.content);
+					res.send(html);
+				} 
+				else 
+				{
+					res.send(404);
+				}
+			} 
+			else 
+			{
+				res.send(404);
+			}
+		});
 	} else
 	{
 		res.sendfile('private/index.html');
 	}
+}
+
+exports.upload = function(req, res) {
+	console.log(req.body);
+	fs.readFile(req.files.displayImage.path, function (err, data) {
+	  var newPath = "public/images/" + req.files.name;
+	  fs.writeFile(newPath, data, function (err) {
+	    res.send({errors:0, message:"Successfully uploaded."});
+	  });
+	});
 }
