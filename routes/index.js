@@ -179,7 +179,7 @@ exports.login = function(req, res){
 	}
 }
 
-exports.loginForm = function(req, res){
+exports.loginForm = function(req, res) {
 	
 	if (!req.session.user_id) {
 		res.sendfile('private/login.html');
@@ -191,7 +191,7 @@ exports.loginForm = function(req, res){
 
 }
 
-exports.drop = function(req, res){
+exports.drop = function(req, res) {
 	Article.find().exec(function(err, docs){
 		for (var doc in docs) {
 			var x = docs[doc];
@@ -199,4 +199,13 @@ exports.drop = function(req, res){
 		}
 		res.send('hi');
 	});
+}
+
+exports.static = function(req, res) {
+	if (req.query !== undefined && req.query._escaped_fragment_ !== undefined) {
+		res.send('crawler');
+	} else
+	{
+		res.sendfile('private/index.html');
+	}
 }
