@@ -1,13 +1,46 @@
 
 /*
- * GET home page.
- */
- var mongoose = require('mongoose'),
- fs = require('fs');
- mongoose.connect('mongodb://localhost/test');
+* GET home page.
+*/
+var mongoose = require('mongoose'),
+fs = require('fs');
+mongoose.connect('mongodb://localhost/test');
 var db = mongoose.connection;
-
 var md = require("node-markdown").Markdown;
+
+/**DEFINE SCHEMAS**/
+
+function loadSchema (name) {
+	var schemas = mongoose.Schema({
+		name:String,
+		schema:[array]
+	});
+
+	var Schemas = mongoose.model('Schema', schemas);
+
+	Schemas.findOne({'name':name}).exec( function(err, schema) {
+		if (!err) { 
+			return schema;
+		} 
+		else
+		{
+			return err;
+		}
+	});
+}
+
+var articleSchema = mongoose.Schema({
+	name:String,
+	slug: String,
+	date: { type: Date, default: Date.now }, 
+	weight: Number,
+	content: String,
+	hidden: Boolean,
+	category:[String]
+});
+
+var Article = mongoose.model('Article', articleSchema);
+var query = Article.find();
 
 function checkAuth(req, res, next) {
   if (!req.session.user_id) {
@@ -51,20 +84,47 @@ function wrapper(req, res, data){
   }
 }
 
-/**DEFINE SCHEMAS**/
-var articleSchema = mongoose.Schema({
-  name:String,
-  slug: String,
-  date: { type: Date, default: Date.now }, 
-  weight: Number,
-  content: String,
-  hidden: Boolean,
-  category:[String]
-});
+exports.addBySchema = function(req, res) {
+	var schema = loadSchema(schema);
+	var newEntry = new schema(req.body);
+	newEntry.save(function (err) {
+	  if (err)
+	 res.send(err);
+	});
 
-var Article = mongoose.model('Article', articleSchema);
-var query = Article.find();
+	wrapper(req, res, {error:0, data:newEntry});
+}
 
+exports.newSchema = function(req, res){
+	data = req.body;
+
+	if (data.name === undefined) {
+		res.send({error:1, message:'No name received.'});
+		return;
+	} 
+	else if (data.schema === undefined)
+	{
+		res.send({error:1, message:'No schema received.'});
+		return;
+	}
+
+	var schemas = mongoose.Schema({
+		name:String,
+		schema:[array]
+	});
+
+	var Schemas = mongoose.model('Schema', schemas);
+	var newSchema = new Schemas({name:data.name, schema:data.schema});
+	newSchema.save(function(err) {
+		if (err) {
+			res.send({err:1, message: 'Failed saving to db.'});
+		}
+		else
+		{
+			wrapper(req, res, newSchema);
+		}
+	});
+}
 
 exports.index = function(req, res){
   res.sendfile('private/index.html');
