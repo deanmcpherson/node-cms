@@ -148,4 +148,8 @@ function FeedCtrl($scope, $http) {
 		return date.getTime();
 	}
 	$scope.refresh();
+
+	$scope.uploadFile = function() {
+		
+	}
 }

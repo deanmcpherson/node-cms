@@ -14,7 +14,8 @@
     <script type="text/javascript" src="javascripts/prism.js"></script>
 <body>
     <div id="list" ng-controller="FeedCtrl">
-        <input type="file" name="image" /><button id="upload">Upload</button>
+     <input type="file" name="image"></input>
+ </form>
         <h1>List</h1>
         <div class="new-panel" ng-show="isAdmin">
             <div ng-click="addMode(true)" ng-hide="adding">Add a new post</div>
@@ -47,5 +48,53 @@
 </body>
 <footer>
      <script src="javascripts/app.js"></script>
+     <script>
+    $(document).ready(function(){
+        (function () {
+        var input =     $('[name="image"]')[0], 
+            formdata = false;
+
+        function showUploadedItem (source) {
+        console.log(source);
+        }   
+        
+        input.addEventListener("change", function (evt) {
+            console.log('uploading');
+            var formdata = new FormData();
+            var i = 0, len = this.files.length, img, reader, file;
+        
+            for ( ; i < len; i++ ) {
+                file = this.files[i];
+        
+                if (!!file.type.match(/image.*/)) {
+                    if ( window.FileReader ) {
+                        reader = new FileReader();
+                        reader.onloadend = function (e) { 
+                            showUploadedItem(e.target.result, file.fileName);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                    if (formdata) {
+                        formdata.append("file", file);
+                    }
+                }   
+            }
+        
+            if (formdata) {
+                $.ajax({
+                    url: "/upload",
+                    type: "POST",
+                    data: formdata,
+                    processData: false,
+                    contentType: false,
+                    success: function (res) {
+                        console.log(res);
+                    }
+                });
+            }
+        }, false);
+        }());
+    });
+     </script>
 </footer>	
 </html>

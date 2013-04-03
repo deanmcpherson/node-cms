@@ -291,11 +291,12 @@ exports.static = function(req, res) {
 }
 
 exports.upload = function(req, res) {
-	console.log(req.body);
-	fs.readFile(req.files.displayImage.path, function (err, data) {
-	  var newPath = "public/images/" + req.files.name;
+	var file = req.files.file;
+
+	fs.readFile(file.path, function (err, data) {
+	  var newPath = "public/images/" + file.name;
 	  fs.writeFile(newPath, data, function (err) {
-	    res.send({errors:0, message:"Successfully uploaded."});
+	    res.send({errors:0, message:"Successfully uploaded.", path:newPath});
 	  });
 	});
 }
