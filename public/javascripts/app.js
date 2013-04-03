@@ -55,6 +55,49 @@ var deanApp = angular.module('deanApp', ['ui']).directive('markdown', function()
 
     }
 
+}).directive('uploadFile', function() {
+	 return function (scope, element, attrs) {
+        formdata = false;
+        function showUploadedItem (source) {
+       	 console.log(source);
+        }   
+       console.log(element);
+       var input = element[0];
+        input.addEventListener("change", function (evt) {
+            console.log('uploading');
+            var formdata = new FormData();
+            var i = 0, len = this.files.length, img, reader, file;
+        
+            for ( ; i < len; i++ ) {
+                file = this.files[i];
+                   
+				if ( window.FileReader ) {
+					reader = new FileReader();
+					reader.onloadend = function (e) { 
+						showUploadedItem(e.target.result, file.fileName);
+					};
+					reader.readAsDataURL(file);
+				}
+				if (formdata) {
+					formdata.append("file", file);
+				}           
+            }
+        
+            if (formdata) {
+                $.ajax({
+                    url: "/upload",
+                    type: "POST",
+                    data: formdata,
+                    processData: false,
+                    contentType: false,
+                    success: function (res) {
+                    	scope.addImage(res.path);
+                        
+                    }
+                });
+            }
+        }, false);
+    };
 });
 
 function FeedCtrl($scope, $http) {
@@ -65,13 +108,26 @@ function FeedCtrl($scope, $http) {
     	console.log('hi');
     });
 
+    $scope.addImage = function(r) {
+    	console.log(r);
+    }
+
+    $scope.refreshImages = function() {
+    	$http.get('/_api/images').then( function(result) {
+	        $scope.images =result.data.data;
+	    });
+    }
+
     $scope.isAdmin  = false;
 
 	$scope.refresh = function() {
 		$http.get('/_api/list').then( function(result) {
-				$scope.isAdmin = result.data.isAdmin;
-		        $scope.items =result.data.data;
-		    });
+			$scope.isAdmin = result.data.isAdmin;
+	        $scope.items =result.data.data;
+	        if ($scope.isAdmin) {
+	        	$scope.refreshImages();
+	        }
+	    });
 	}
 
 	$scope.save = function() {

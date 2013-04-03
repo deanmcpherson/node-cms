@@ -290,6 +290,22 @@ exports.static = function(req, res) {
 	}
 }
 
+exports.images = function(req, res) {
+	var path = "public/images"
+	fs.readdir(path, function(err, data){
+		if (err) { res.send({errors:1, message:err}); return; }
+		var newData = [];
+		for(var x in data) {
+			var d = {};
+			d.name = data[x];
+			d.path = path + '/' + data[x];
+			d.isImage = (/\.(gif|jpg|jpeg|tiff|png)$/i).test(d.name);
+			newData.push(d);
+		}
+		res.send({errors:0, message:'Success.', data: newData});
+	});
+}
+
 exports.upload = function(req, res) {
 	var file = req.files.file;
 

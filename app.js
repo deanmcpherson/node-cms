@@ -41,6 +41,7 @@ app.get('/_api/remove/:id', checkAuth, routes.remove);
 app.get('/_api/drop_entire_db', checkAuth, routes.drop);
 app.post('/_api/update', checkAuth, routes.update);
 app.post('/_api/add', checkAuth, routes.add);
+app.get('/_api/images', checkAuth, routes.images);
 app.get('/_api/:id', routes.get);
 app.post('/upload', routes.upload);
 app.get('/auth', routes.auth);
