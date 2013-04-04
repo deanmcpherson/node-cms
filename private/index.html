@@ -14,8 +14,6 @@
     <script type="text/javascript" src="javascripts/prism.js"></script>
 <body>
     <div id="list" ng-controller="FeedCtrl">
-     <input type="file" name="image" upload-file></input>
- </form>
         <h1>List</h1>
         <div class="new-panel" ng-show="isAdmin">
             <div ng-click="addMode(true)" ng-hide="adding">Add a new post</div>
@@ -27,6 +25,14 @@
             <input type='text'  ng-model='new.category'  placeholder="category"/><br />
             <markdown cont="new.content"></markdown>
             <textarea x-editor ng-model="new.content"></textarea>
+             <div class="files">
+                <input type="file" name="image" upload-file></input>
+                <ul>
+                    <li ng-repeat="image in images | filter:isImage">
+                        <img src="{{image.path}}" width="30px" />
+                    </li>
+                </ul>
+            </div>
             <div ng-click="addNew()">Save</div>
          </span>
         </div>

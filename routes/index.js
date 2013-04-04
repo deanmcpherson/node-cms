@@ -298,7 +298,7 @@ exports.images = function(req, res) {
 		for(var x in data) {
 			var d = {};
 			d.name = data[x];
-			d.path = path + '/' + data[x];
+			d.path = 'images/' + data[x];
 			d.isImage = (/\.(gif|jpg|jpeg|tiff|png)$/i).test(d.name);
 			newData.push(d);
 		}

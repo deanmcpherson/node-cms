@@ -112,6 +112,10 @@ function FeedCtrl($scope, $http) {
     	console.log(r);
     }
 
+    $scope.isImage = function(item) {
+    	return item.isImage;
+    }
+
     $scope.refreshImages = function() {
     	$http.get('/_api/images').then( function(result) {
 	        $scope.images =result.data.data;
