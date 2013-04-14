@@ -1,24 +1,81 @@
 <!DOCTYPE HTML>
-<html>
-<head><script src="http://code.jquery.com/jquery-1.9.1.min.js"></script></head>
+<html ng-app="deanApp">
+<head>
+    <title>Dean McPherson</title>
+    <meta name="fragment" content="!">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="stylesheets/style.css">
+    <link rel="stylesheet" href="stylesheets/prism.css">
+	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular.min.js"></script>
+    <script type="text/javascript" src="javascripts/angular-ui-ieshiv.min.js"></script>
+    <script type="text/javascript" src="javascripts/angular-ui.js"></script>
+    <script type="text/javascript" src="javascripts/Showdown.js"></script>
+    <script type="text/javascript" src="javascripts/prism.js"></script>
 <body>
-	<h1>ADMIN CONSOLE</h1>
-<script>
-function convertToSlug(Text)
-{
-    return Text
-        .toLowerCase()
-        .replace(/ /g,'-')
-        .replace(/[^\w-]+/g,'')
-        ;
-}
-$(document).ready(function(){
-	var slugBox = $('[name="slug"]');
-	$('[name="name"]').keyup(function(){
-		var slug = convertToSlug($(this).val());
-		slugBox.val(slug);
-	});
-
-});
-</script>
+    <div id="list" ng-controller="FeedCtrl">
+        <h1>List</h1>
+        <div class="new-panel" ng-show="isAdmin">
+            <div ng-click="addMode(true)" ng-hide="adding">Add a new post</div>
+             <div ng-click="addMode(false)" ng-show="adding">Quit</div>
+             <span ng-show="adding">
+            <input type='text' ng-model='newItem.name' placeholder="name"/><br />
+            <input type='text'  ng-model='newItem.weight'  placeholder="weight"/><br />
+            <input type='checkbox'  ng-model='newItem.hidden'  placeholder="hidden"/><br />
+            <input type='text'  ng-model='newItem.category'  placeholder="category"/><br />
+            <markdown cont="newItem.content"></markdown>
+            <textarea x-editor ng-model="newItem.content"></textarea>
+             <div class="files">
+                <input type="file" name="image" upload-file></input>
+                <ul>
+                    <li ng-repeat="image in images | filter:isImage">
+                        <img src="{{image.path}}" width="30px" ng-click="addImageToContent(newItem)" />
+                    </li>
+                </ul>
+                <ul>
+                    <li ng-repeat="image in images | filter:!isImage">
+                        <a  width="30px" ng-click="addImageToContent(newItem)">{{image.name}}</a>
+                    </li>
+                </ul>
+            </div>
+            <div ng-click="addNew()">Save</div>
+         </span>
+        </div>
+        <div class="panel" ng-repeat="item in items | orderBy:'_id':true"  >
+             <h1>{{item.name}}</h1>
+            <span ng-hide="item.edit">
+                <div class="edit" ng-show="isAdmin" ng-click="editMode(item, true)">Edit</div>
+                <markdown cont="item.content"></markdown>
+                <div class="delete" ng-click="remove()" ng-show="isAdmin">delete</div>
+            </span>
+            <span ng-show="item.edit">
+                <div class="close" ng-show="isAdmin" ng-click="editMode(item, false)">Close</div>
+                <markdown cont="item.content"></markdown>
+                <textarea x-editor ng-model="item.content"></textarea>
+                 <div class="files">
+                <input type="file" name="image" upload-file></input>
+                 <ul class="newImages">
+                    <li ng-repeat="image in newImages | filter:isImage:reverse">
+                        <img src="{{image.path}}" width="30px" ng-click="addImageToContent(item)" />
+                    </li>
+                </ul>
+                <ul class="images">
+                    <li ng-repeat="image in images | filter:isImage">
+                        <img src="{{image.path}}" width="30px" ng-click="addImageToContent(item)" />
+                    </li>
+                </ul>
+                <ul class="files">
+                    <li ng-repeat="image in images | filter:!isImage">
+                        <a  width="30px" ng-click="addImageToContent(item)">{{image.name}}</a>
+                    </li>
+                </ul>
+            </div>
+                <div class="save" ng-click="save()" ng-show="isAdmin">Save</div>
+            </span>
+            <hr />
+    </div>
+</body>
+<footer>
+     <script src="javascripts/app.js"></script>
+</footer>	
 </html>

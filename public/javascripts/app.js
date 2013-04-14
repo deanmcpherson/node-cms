@@ -1,33 +1,9 @@
 var E = {};
 
-var tabbifyTextarea = function(element){
-	$("textarea").not('.prp').addClass('prp').keydown(function(e) {
-	    if(e.keyCode === 9) { // tab was pressed
-	        // get caret position/selection
-	        var start = this.selectionStart;
-	        var end = this.selectionEnd;
-
-	        var $this = $(this);
-	        var value = $this.val();
-
-	        // set textarea value to: text before caret + tab + text after caret
-	        $this.val(value.substring(0, start)
-	                    + "\t"
-	                    + value.substring(end));
-
-	        // put caret at right position again (add one for the tab)
-	        this.selectionStart = this.selectionEnd = start + 1;
-
-	        // prevent the focus lose
-	        e.preventDefault();
-	    }
-	});
-}
-
 var deanApp = angular.module('deanApp', ['ui']).directive('markdown', function() {
-    var converter = new Showdown.converter();
     return {
         restrict: 'E',
+        replace: true,
         link: function(scope, element, attrs) {
 
             scope.$watch('cont', function(n, p) {
@@ -50,7 +26,28 @@ var deanApp = angular.module('deanApp', ['ui']).directive('markdown', function()
 }).directive('editor', function() {
 {
     return function (scope, element, attrs) {
-        tabbifyTextarea(element);
+        //tabbifyTextarea(element);
+        $(element).keydown(function(e) {
+	    if(e.keyCode === 9) { // tab was pressed
+	        // get caret position/selection
+	        var start = this.selectionStart;
+	        var end = this.selectionEnd;
+
+	        var $this = $(this);
+	        var value = $this.val();
+
+	        // set textarea value to: text before caret + tab + text after caret
+	        $this.val(value.substring(0, start)
+	                    + "\t"
+	                    + value.substring(end));
+
+	        // put caret at right position again (add one for the tab)
+	        this.selectionStart = this.selectionEnd = start + 1;
+
+	        // prevent the focus lose
+	        e.preventDefault();
+	    }
+	});
     };
 
     }
@@ -91,8 +88,7 @@ var deanApp = angular.module('deanApp', ['ui']).directive('markdown', function()
                     processData: false,
                     contentType: false,
                     success: function (res) {
-                    	scope.addImage(res.path);
-                        
+                    	scope.addImage(res);               
                     }
                 });
             }
@@ -102,15 +98,37 @@ var deanApp = angular.module('deanApp', ['ui']).directive('markdown', function()
 
 function FeedCtrl($scope, $http) {
   $scope.items =[];
+  $scope.newImages = [];
   E.e = $scope;
     $scope.$on('$viewContentLoaded', function() {
     	tabbifyTextarea();
     	console.log('hi');
     });
 
-    $scope.addImage = function(r) {
-    	console.log(r);
+    $scope.addImage = function (res) {
+    	$scope.newImages.unshift(res.data);
+    	$scope.images.push(res.data);
+    	$scope.$apply();
     }
+    $scope.addImageToContent = function (item) {
+
+	var content = item.content;
+	if (this.image.isImage) {
+	imageString = '<img src="'+this.image.path+'" />';
+	} 
+	else
+	{
+		imageString = '<a href="' + this.image.path+'">' + this.image.name + '</a>';
+	}
+	if (content != undefined) {
+		item.content += imageString;
+	} 
+	else
+	{
+		item.content = imageString;
+	}
+
+}
 
     $scope.isImage = function(item) {
     	return item.isImage;
@@ -180,20 +198,20 @@ function FeedCtrl($scope, $http) {
 		item.edit = flag;
 	}
 
-	$scope.new = {};
+	$scope.newItem = {};
 	$scope.adding = false;
 	$scope.addMode = function(flag) {
 		$scope.adding = flag;
 		if (flag) {
-			$scope.new = {};
+			$scope.newItem = {};
 		}
 	}
 
 	$scope.addNew = function() {
-		$.post('/_api/add', $scope.new).then( function(result) {
+		$.post('/_api/add', $scope.newItem).then( function(result) {
 			if (result.data.error == 0){
 				$scope.items.push(result.data.data);
-				$scope.new = {};
+				$scope.newItem = {};
 				$scope.adding = false;
 				$scope.$apply();
 			}

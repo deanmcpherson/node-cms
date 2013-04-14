@@ -127,7 +127,13 @@ exports.newSchema = function(req, res){
 }
 
 exports.index = function(req, res){
-  res.sendfile('private/index.html');
+	if (!req.session.user_id) {
+ 	 res.sendfile('private/index.html');
+ 	} 
+ 	else
+ 	{
+ 		res.sendfile('private/admin.html');
+ 	}
 };
 
 exports.list = function(req, res){
@@ -312,7 +318,11 @@ exports.upload = function(req, res) {
 	fs.readFile(file.path, function (err, data) {
 	  var newPath = "public/images/" + file.name;
 	  fs.writeFile(newPath, data, function (err) {
-	    res.send({errors:0, message:"Successfully uploaded.", path:newPath});
+			var d = {};
+			d.name = file.name;
+			d.path = 'images/' + d.name;
+			d.isImage = (/\.(gif|jpg|jpeg|tiff|png)$/i).test(d.name);		
+	    res.send({errors:0, message:"Successfully uploaded.", data:d});
 	  });
 	});
 }
