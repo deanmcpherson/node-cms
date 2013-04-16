@@ -32,7 +32,8 @@ function loadSchema (name) {
 var articleSchema = mongoose.Schema({
 	name:String,
 	slug: String,
-	date: { type: Date, default: Date.now }, 
+	date: { type: Date, default: Date.now },
+	lastModified: {type: Date, default:Date.now},
 	weight: Number,
 	content: String,
 	hidden: Boolean,
@@ -136,6 +137,11 @@ exports.index = function(req, res){
  	}
 };
 
+exports.preview = function(req, res){
+ 	 res.sendfile('private/index.html');
+};
+
+
 exports.list = function(req, res){
 	query.exec(function(err,docs){
 		if (!err){
@@ -189,6 +195,7 @@ exports.update = function(req, res){
 				for (x in data){
 					docs[x] = data[x];
 				}
+				docs['lastModified'] = Date.now();
 				docs.save(function(err) {
 					if (err) {
 						res.send({error:1, message:"Something went wrong during the update process."});

@@ -24,10 +24,15 @@
 <body>
     <div id="list" ng-controller="FeedCtrl">
         <h1>List</h1>
-        <div class="panel" ng-repeat="item in items | orderBy:'_id':true"  >
+        <article class="panel" ng-repeat="item in items | orderBy:'_id':true"  >
              <h1>{{item.name}}</h1>
-                <markdown cont="item.content"></markdown>
-            <hr />
+             <ul class="meta">
+                <li>Dean McPherson</li>
+                <li>{{item.date | date:"longDate"}}</li>
+                <li ng-show="item.category">About {{item.category.join(', ')}}</li>
+             </ul>
+            <markdown cont="item.content"></markdown>
+        </arcicle>
     </div>
 </body>
 <footer>

@@ -36,6 +36,7 @@ app.configure('development', function(){
 });
 
 app.get('/', routes.index);
+app.get('/preview', routes.preview);
 app.get('/_api/list', routes.list);
 app.get('/_api/remove/:id', checkAuth, routes.remove);
 app.get('/_api/drop_entire_db', checkAuth, routes.drop);
