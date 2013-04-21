@@ -1,0 +1,20 @@
+ <div id="wrapper" ng-controller="FeedCtrl">
+        <article class="panel row list" ng-repeat="item in items | orderBy:'_id':true">
+             <div class="one-quarter">
+                <div class="meta">
+             <a href="/{{item.slug}}"> <div class="featuredImage">
+             <div class="featuredImageInner" ng-show="item.featureImage" style="background-image:url({{item.featureImage}});"></div>
+             <div class="featuredImageInner" ng-hide="item.featureImage" style="background-image:url(/images/default.png);"></div>
+           </div></a>
+             <ul>
+                <li>Dean McPherson</li>
+                <li>{{item.date | date:"longDate"}}</li>
+                <li ng-show="item.category">    About {{item.category.join(', ')}}</li>
+             </ul>
+             </div>
+         </div><div class="three-quarters">
+         <a href="/{{item.slug}}"><h1>{{item.name}}</h1></a>
+            <markdown cont="item.content"></markdown>
+        </div>
+        </arcicle>
+    </div>

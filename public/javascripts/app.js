@@ -1,6 +1,15 @@
 var E = {};
 
-var deanApp = angular.module('deanApp', ['ui']).directive('markdown', function() {
+var deanApp = angular.module('deanApp', ['ui']).config(function($routeProvider, $locationProvider){
+	 $locationProvider.html5Mode(true);
+	$routeProvider.when('/', {
+		controller:'FeedCtrl',
+		templateUrl: '/partials/articles.html'
+	}).when('/:slug', {
+		controller: 'SingleCtrl',
+		templateUrl: '/partials/article.html'
+	});
+}).directive('markdown', function() {
     return {
         restrict: 'E',
         replace: true,
@@ -96,15 +105,11 @@ var deanApp = angular.module('deanApp', ['ui']).directive('markdown', function()
     };
 });
 
-function FeedCtrl($scope, $http) {
+function FeedCtrl($scope, $http, $rootScope) {
+
   $scope.items =[];
   $scope.newImages = [];
-  E.e = $scope;
-    $scope.$on('$viewContentLoaded', function() {
-    	tabbifyTextarea();
-    	console.log('hi');
-    });
-
+ 
     $scope.addImage = function (res) {
     	$scope.newImages.unshift(res.data);
     	$scope.images.push(res.data);
@@ -134,6 +139,26 @@ function FeedCtrl($scope, $http) {
     	return item.isImage;
     }
 
+    $scope.isFeatureImage = function(item) {
+    	if (item.featureImage === this.image.path) {
+    		return true;
+    	}
+    	else
+    	{
+    		return false;
+    	}
+    }
+
+     $scope.featureImageToggle = function(item, flag) {
+     	if (flag) {
+     		item.featureImage = this.image.path;
+     	}
+     	else
+     	{
+     		delete item.featureImage;
+     	}
+     }
+
     $scope.refreshImages = function() {
     	$http.get('/_api/images').then( function(result) {
 	        $scope.images =result.data.data;
@@ -146,6 +171,7 @@ function FeedCtrl($scope, $http) {
 		$http.get('/_api/list').then( function(result) {
 			$scope.isAdmin = result.data.isAdmin;
 	        $scope.items =result.data.data;
+	        $rootScope.items = $scope.items;
 	        if ($scope.isAdmin) {
 	        	$scope.refreshImages();
 	        }
@@ -225,9 +251,54 @@ function FeedCtrl($scope, $http) {
 		var date = new Date(d);
 		return date.getTime();
 	}
-	$scope.refresh();
+	if ($rootScope.items !== undefined) {
+  		$scope.items = $rootScope.items;
+  } else {
+  	$scope.refresh();
+  }
+}
 
-	$scope.uploadFile = function() {
-		
-	}
+function SingleCtrl($scope, $http, $rootScope, $routeParams) {
+		var slug = $routeParams.slug,
+		items = $rootScope.items;
+
+		$scope.refreshSlug = function(slug, save) {
+			$http.get('/_api/' +slug).then(function(res){
+			if (res.data.error === 0) {
+				console.log('hi!', res.data.data);
+				$scope.item = res.data.data;
+				if (save && $rootScope.items !== undefined) {
+					$rootScope.items.push(res.data.data);
+				}
+			} 
+			else
+			{
+				$scope.item = {
+					name:'Uh oh.. we can\'t seem to find that page.',
+					content: 'Sorry, but no.'
+				};
+			}
+			});
+		}
+
+		for (var x in items) {
+			if (items[x]['slug'] == slug) {
+				item = items[x];
+			}
+		}
+		if (items == undefined) {
+			$scope.refreshSlug(slug, true);
+		} else
+		{
+			$scope.item = item;
+		}
+
+		   $scope.$on('$viewContentLoaded', function(){
+		   	if ($(window).width() < 641) {
+			   $('.meta').addClass('act');
+		   	} else {
+		   		 setTimeout(function() {$('.meta').addClass('act');}, 1250);
+		   	}
+		   });
+
 }

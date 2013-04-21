@@ -4,6 +4,7 @@
     <title>Dean McPherson</title>
     <meta name="fragment" content="!">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='http://fonts.googleapis.com/css?family=Vollkorn:400italic,400,700' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="stylesheets/style.css">
     <link rel="stylesheet" href="stylesheets/prism.css">
       <!--[if lte IE 8]>
@@ -14,7 +15,7 @@
       </script>
     <![endif]-->
 	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.5/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.1.4/angular.min.js"></script>
     <script type="text/javascript" src="javascripts/angular-ui.js"></script>
     <script type="text/javascript" src="javascripts/Showdown.js"></script>
     <script type="text/javascript" src="javascripts/prism.js"></script>
@@ -22,18 +23,8 @@
     <!--[if lte IE 8]><script src="javascripts/angular-ui-ieshiv.min.js"></script><![endif]-->
 </head>
 <body>
-    <div id="list" ng-controller="FeedCtrl">
-        <h1>List</h1>
-        <article class="panel" ng-repeat="item in items | orderBy:'_id':true"  >
-             <h1>{{item.name}}</h1>
-             <ul class="meta">
-                <li>Dean McPherson</li>
-                <li>{{item.date | date:"longDate"}}</li>
-                <li ng-show="item.category">About {{item.category.join(', ')}}</li>
-             </ul>
-            <markdown cont="item.content"></markdown>
-        </arcicle>
-    </div>
+    <ng-view ng-animate="{enter: 'view-enter', leave: 'view-leave'}">
+</ng-view>
 </body>
 <footer>
 </footer>	

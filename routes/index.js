@@ -36,6 +36,7 @@ var articleSchema = mongoose.Schema({
 	lastModified: {type: Date, default:Date.now},
 	weight: Number,
 	content: String,
+	featureImage: String,
 	hidden: Boolean,
 	category:[String]
 });
