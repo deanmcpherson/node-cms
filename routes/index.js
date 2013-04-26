@@ -178,7 +178,9 @@ exports.auth = function(req, res) {
 
 exports.add = function(req, res){
 	var data = req.body;
-	data.slug = convertToSlug(data.name);
+	if (data.name != undefined) {
+		data.slug = convertToSlug(data.name);
+	}
 	var article = new Article(data);
 	article.save(function (err) {
 	  if (err) // ...
@@ -196,6 +198,8 @@ exports.update = function(req, res){
 				for (x in data){
 					docs[x] = data[x];
 				}
+				docs['slug'] = convertToSlug(data.name);
+				
 				docs['lastModified'] = Date.now();
 				docs.save(function(err) {
 					if (err) {

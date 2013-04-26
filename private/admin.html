@@ -13,72 +13,96 @@
     <script type="text/javascript" src="javascripts/Showdown.js"></script>
     <script type="text/javascript" src="javascripts/prism.js"></script>
 <body>
-    <div id="list" ng-controller="FeedCtrl">
-        <h1>List</h1>
-        <article class="new-panel" ng-show="isAdmin">
-            <div ng-click="addMode(true)" ng-hide="adding">Add a new post</div>
-             <div ng-click="addMode(false)" ng-show="adding">Quit</div>
+<a href="/logout" style="position: absolute; top:0; right:0; padding:1em;">Logout</a>
+    <div id="list" class="admin" ng-controller="FeedCtrl">
+        <h1 style="text-align:center;">Admin</h1>
+        <article class="new-panel single row" ng-show="isAdmin">
+            <div ng-click="addMode(true)" ng-hide="adding" class="btn add">Add a new post</div>
+             <div ng-click="addMode(false)" ng-show="adding"  class="btn quit">Quit</div>
              <span ng-show="adding">
             <input type='text' ng-model='newItem.name' placeholder="name"/><br />
-            <label for="hidden">Hidden?</label><input type='checkbox'  ng-model='newItem.hidden'  placeholder="hidden"/><br />
             <input type='text'  ng-model='newItem.category'  placeholder="category"/><br />
             <markdown cont="newItem.content"></markdown>
-            <textarea x-editor ng-model="newItem.content"></textarea>
-             <div class="files">
-                <input type="file" name="image" upload-file></input>
-                <ul>
-                    <li ng-repeat="image in images | filter:isImage">
-                        <img src="{{image.path}}" width="30px" ng-click="addImageToContent(newItem)" />
-                        <button ng-click="featureImageToggle(newItem, true)" ng-hide="isFeatureImage(newItem)">Featured Image</button>
-                        <button ng-click="featureImageToggle(newItem, false)" ng-show="isFeatureImage(newItem)">Remove Featured Image</button>
-                    </li>
-                </ul>
-                <ul>
-                    <li ng-repeat="image in images | filter:!isImage">
-                        <a  width="30px" ng-click="addImageToContent(newItem)">{{image.name}}</a>
-                    </li>
-                </ul>
-            </div>
-            <div ng-click="addNew()">Save</div>
-         </span>
-        </article>
-        <article class="panel" ng-repeat="item in items | orderBy:'_id':true"  >
-            <h1>{{item.name}}</h1>
-            <img ng-show="item.featureImage" src="{{item.featureImage}}" />
-            <img ng-hide="item.featureImage" src="/images/default.png" />
-            <span ng-hide="item.edit">
-                <div class="edit" ng-show="isAdmin" ng-click="editMode(item, true)">Edit</div>
-                <markdown cont="item.content"></markdown>
-                <div class="delete" ng-click="remove()" ng-show="isAdmin">delete</div>
-            </span>
-            <span ng-show="item.edit">
-                <div class="close" ng-show="isAdmin" ng-click="editMode(item, false)">Close</div>
-                <markdown cont="item.content"></markdown>
-                <textarea x-editor ng-model="item.content"></textarea>
-                 <div class="files">
-                <input type="file" name="image" upload-file></input>
-                 <ul class="newImages">
-                    <li ng-repeat="image in newImages | filter:isImage:reverse">
-                        <img src="{{image.path}}" width="30px" ng-click="addImageToContent(item)" />
-                        <button ng-click="featureImageToggle(item, true)" ng-hide="isFeatureImage(item)">Featured Image</button>
-                        <button ng-click="featureImageToggle(item, false)" ng-show="isFeatureImage(item)">Remove Featured Image</button>
+            <textarea x-editor ng-model="newItem.contentTmp" placeholder="Write your post in markdown here..."></textarea>
+             <div class="btn" ng-hide="newItem.imageFlag" ng-click="imageFlag(true, newItem)">Uploads</div>
+                 <div class="files" ng-show="newItem.imageFlag">
+				 <div class="btn" ng-click="imageFlag(false, newItem)">Close Uploads</div>
+                <div class="btn upload"><input type="file" name="image" style="opacity: 0; position: absolute;" upload-file></input>Upload a file</div>
+                 <ul class="newImages images">
+					<li ng-repeat="image in newImages | filter:isImage:reverse" style="background:url({{image.path}});">
+						<div ng-click="addImageToContent(newItem)" class="btn">+</div>
+                        <div ng-click="featureImageToggle(newItem, true)" class="btn fi">Featured Image</div>
                     </li>
                 </ul>
                 <ul class="images">
-                    <li ng-repeat="image in images | filter:isImage">
-                        <img src="{{image.path}}" width="30px" ng-click="addImageToContent(item)" />
-                        <button ng-click="featureImageToggle(item, true)" ng-hide="isFeatureImage(item)">Featured Image</button>
-                        <button ng-click="featureImageToggle(item, false)" ng-show="isFeatureImage(item)">Remove Featured Image</button>
+				 <li ng-repeat="image in images | filter:isImage" style="background:url({{image.path}});">
+						<div ng-click="addImageToContent(newItem)" class="btn">+</div>
+                        <div ng-click="featureImageToggle(newItem, true)" class="btn fi">Featured Image</div>               
                     </li>
                 </ul>
                 <ul class="files">
                     <li ng-repeat="image in images | filter:!isImage">
-                        <a  width="30px" ng-click="addImageToContent(item)">{{image.name}}</a>
+                        <a ng-click="addImageToContent(newItem)">{{image.name}}</a>
                     </li>
                 </ul>
             </div>
-                <div class="save" ng-click="save()" ng-show="isAdmin">Save</div>
+			<div ng-click="copyContent(newItem)"  class="btn preview">Preview</div>
+            <div ng-click="addNew()"  class="btn save">Save</div>
+			<message>{{item.message}}</message>
+         </span>
+        </article>
+        <article class="panel single row" ng-repeat="item in items | orderBy:'_id':true"  >
+				   <div class="one-quarter">
+						<div class="meta">
+					 <div class="featuredImage">
+					 <div class="featuredImageInner" ng-show="item.featureImage" style="background-image:url({{item.featureImage}});"></div>
+					 <div class="featuredImageInner" ng-hide="item.featureImage" style="background-image:url(/images/default.png);"></div>
+				   </div>
+					 <ul>
+						<li>Dean McPherson</li>
+						<li>{{item.date | date:"longDate"}}</li>
+						<li ng-show="item.category">    About {{prepareCategories(item.category)}}</li>
+					 </ul>
+					 </div>
+				 </div>
+				 <div class="three-quarters">
+         <h1>{{item.name}}</h1>
+			<span ng-hide="item.edit">
+                <div ng-show="isAdmin" ng-click="editMode(item, true)"  class="btn edit">Edit</div>
+                <div ng-click="remove()" ng-show="isAdmin"  class="btn delete">Delete</div>
             </span>
+            <span ng-show="item.edit">
+                <div ng-show="isAdmin" ng-click="editMode(item, false)"  class="btn close">Close</div>
+				 <markdown cont="item.content" class="previewBox"></markdown>
+				 <input type='text' ng-model='item.name' placeholder="name"/><br />
+				<input type='text'  ng-model='item.category'  placeholder="category"/><br />
+                <textarea x-editor ng-model="item.contentTmp"></textarea>
+				<div class="btn" ng-hide="item.imageFlag" ng-click="imageFlag(true)">Uploads</div>
+                 <div class="files" ng-show="item.imageFlag">
+				 <div class="btn" ng-click="imageFlag(false)">Close Uploads</div>
+				 <div class="btn upload"><input type="file" name="image" style="opacity: 0; position: absolute;" upload-file></input>Upload a file</div>
+                 <ul class="newImages images">
+					<li ng-repeat="image in newImages | filter:isImage:reverse" style="background:url({{image.path}});">
+						<div ng-click="addImageToContent(item)" class="btn">+</div>
+                        <div ng-click="featureImageToggle(item, true)" class="btn fi">Featured Image</div>
+                    </li>
+                </ul>
+                <ul class="images">
+				 <li ng-repeat="image in images | filter:isImage" style="background:url({{image.path}});">
+						<div ng-click="addImageToContent(item)" class="btn">+</div>
+                        <div ng-click="featureImageToggle(item, true)" class="btn fi">Featured Image</div>
+                    </li>
+                </ul>
+                <ul class="files">
+                    <li ng-repeat="image in images | filter:!isImage">
+                        <a ng-click="addImageToContent(item)">{{image.name}}</a>
+                    </li>
+                </ul>
+            </div>
+			<div ng-click="copyContent(item)" class="btn preview">Preview</div>
+                <div ng-click="save()" ng-show="isAdmin"  class="btn save">Save</div>
+            </span>
+			</div>
     </article>
 </body>
 <footer>

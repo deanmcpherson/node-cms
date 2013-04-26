@@ -5,7 +5,12 @@ var deanApp = angular.module('deanApp', ['ui']).config(function($routeProvider, 
 	$routeProvider.when('/', {
 		controller:'FeedCtrl',
 		templateUrl: '/partials/articles.html'
-	}).when('/:slug', {
+	})
+	.when('/preview',{
+		controller: 'FeedCtrl',
+		templateUrl: '/partials/articles.html'
+	})
+	.when('/:slug', {
 		controller: 'SingleCtrl',
 		templateUrl: '/partials/article.html'
 	});
@@ -116,8 +121,7 @@ function FeedCtrl($scope, $http, $rootScope) {
     	$scope.$apply();
     }
     $scope.addImageToContent = function (item) {
-
-	var content = item.content;
+	var content = item.contentTmp;
 	if (this.image.isImage) {
 	imageString = '<img src="'+this.image.path+'" />';
 	} 
@@ -126,11 +130,11 @@ function FeedCtrl($scope, $http, $rootScope) {
 		imageString = '<a href="' + this.image.path+'">' + this.image.name + '</a>';
 	}
 	if (content != undefined) {
-		item.content += imageString;
+		item.contentTmp += imageString;
 	} 
 	else
 	{
-		item.content = imageString;
+		item.contentTmp = imageString;
 	}
 
 }
@@ -170,7 +174,10 @@ function FeedCtrl($scope, $http, $rootScope) {
 	$scope.refresh = function() {
 		$http.get('/_api/list').then( function(result) {
 			$scope.isAdmin = result.data.isAdmin;
-	        $scope.items =result.data.data;
+	        $scope.items = result.data.data;
+			for (var x in $scope.items) {
+				$scope.items[x]['contentTmp'] = $scope.items[x]['content'];
+			}
 	        $rootScope.items = $scope.items;
 	        if ($scope.isAdmin) {
 	        	$scope.refreshImages();
@@ -178,8 +185,18 @@ function FeedCtrl($scope, $http, $rootScope) {
 	    });
 	}
 
+	$scope.imageFlag = function (flag, item) {
+		if (item == undefined) {
+			this.item.imageFlag = flag;
+		} else
+		{
+			item.imageFlag = flag;
+		}
+	}
+		
 	$scope.save = function() {
 		var data = this.item;
+		data.content = data.contentTmp;
 		var ref = this;
 		$http.post('/_api/update', data).then( function(result){
 
@@ -189,35 +206,47 @@ function FeedCtrl($scope, $http, $rootScope) {
 			} 
 			else
 			{
-			
-				ref.message = "update failed.";
+				ref.item.message = "update failed.";
 			}
-			console.log(ref);
 		});
 	}
 
+	$scope.copyContent = function (item) {
+		item.content = item.contentTmp;
+	}
+		
 	$scope.remove = function() {
 		var data = this.item;
 		var ref = this;
 		var check = confirm('Delete ' + data.name +'?');
-		console.log(data);
-		$http.get('/_api/remove/'+ data.slug).then( function(result){
-			if (result.data.error == 0) {
-				ref.item.message = "deleted.";
-				var hash = ref.item['$$hashKey'];
-				console.log(hash);
-				for (var x in $scope.items){
-					if ($scope.items[x]['$$hashKey'] === hash){
-						console.log('here', x);
-						$scope.items.splice(x,1);
+		if (check) {
+			$http.get('/_api/remove/'+ data.slug).then( function(result){
+				if (result.data.error == 0) {
+					ref.item.message = "deleted.";
+					var hash = ref.item['$$hashKey'];
+					console.log(hash);
+					for (var x in $scope.items){
+						if ($scope.items[x]['$$hashKey'] === hash){
+							console.log('here', x);
+							$scope.items.splice(x,1);
+						}
 					}
+				} 
+				else
+				{
+					ref.item.message = "Removal failed.";
 				}
-			} 
-			else
-			{
-				ref.item.message = "Removal failed.";
-			}
-		});
+			});
+		}
+	}
+	
+	$scope.prepareCategories = function(cats) {
+		if (typeof cats == 'object') {
+			return cats.join(', ');
+		} else
+		{
+			return cats;
+		}
 	}
 
 	$scope.editMode = function(item, flag) {
@@ -236,14 +265,28 @@ function FeedCtrl($scope, $http, $rootScope) {
 	$scope.addNew = function() {
 		$.post('/_api/add', $scope.newItem).then( function(result) {
 			if (result.data.error == 0){
+				result.data.data.contentTmp = result.data.data.content;
 				$scope.items.push(result.data.data);
 				$scope.newItem = {};
 				$scope.adding = false;
 				$scope.$apply();
+			} else
+			{
+				$scope.newItem.message = result.data.message;
 			}
 		});
 	}
+	
+	$scope.FB_Share = function(item) {
+		//console.log(item);
 
+		FB.ui({
+			method: 'feed',  
+			link: 'http://localhost:3000/'+ item['slug'],
+			name: item['title']
+		});
+	}
+	
 	$scope.order = function(item){
 		console.log(item);
 		return 1;
