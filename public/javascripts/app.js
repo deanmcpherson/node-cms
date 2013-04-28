@@ -1,5 +1,5 @@
 var E = {};
-
+E.first = true;
 var deanApp = angular.module('deanApp', ['ui']).config(function($routeProvider, $locationProvider){
 	 $locationProvider.html5Mode(true);
 	$routeProvider.when('/', {
@@ -95,6 +95,7 @@ var deanApp = angular.module('deanApp', ['ui']).config(function($routeProvider, 
             }
         
             if (formdata) {
+            	$('#SpinnerWrap').addClass('act');
                 $.ajax({
                     url: "/upload",
                     type: "POST",
@@ -102,6 +103,7 @@ var deanApp = angular.module('deanApp', ['ui']).config(function($routeProvider, 
                     processData: false,
                     contentType: false,
                     success: function (res) {
+                    	$('#SpinnerWrap').removeClass('act');
                     	scope.addImage(res);               
                     }
                 });
@@ -164,7 +166,9 @@ function FeedCtrl($scope, $http, $rootScope) {
      }
 
     $scope.refreshImages = function() {
+    	$('#SpinnerWrap').addClass('act');
     	$http.get('/_api/images').then( function(result) {
+    		$('#SpinnerWrap').removeClass('act');
 	        $scope.images =result.data.data;
 	    });
     }
@@ -178,7 +182,16 @@ function FeedCtrl($scope, $http, $rootScope) {
 			for (var x in $scope.items) {
 				$scope.items[x]['contentTmp'] = $scope.items[x]['content'];
 			}
+
 	        $rootScope.items = $scope.items;
+	        
+	        if (E.first) {
+				console.log('here!!');
+				$('#SpinnerWrap').removeClass('act');
+				E.first = false;
+			}
+			
+
 	        if ($scope.isAdmin) {
 	        	$scope.refreshImages();
 	        }
@@ -198,8 +211,9 @@ function FeedCtrl($scope, $http, $rootScope) {
 		var data = this.item;
 		data.content = data.contentTmp;
 		var ref = this;
+		$('#SpinnerWrap').addClass('act');
 		$http.post('/_api/update', data).then( function(result){
-
+			$('#SpinnerWrap').removeClass('act');
 			if (result.data.error == 0) {
 				ref.item.edit = false;
 				ref.item.message = "updated.";
@@ -220,7 +234,9 @@ function FeedCtrl($scope, $http, $rootScope) {
 		var ref = this;
 		var check = confirm('Delete ' + data.name +'?');
 		if (check) {
+			$('#SpinnerWrap').addClass('act');
 			$http.get('/_api/remove/'+ data.slug).then( function(result){
+				$('#SpinnerWrap').removeClass('act');
 				if (result.data.error == 0) {
 					ref.item.message = "deleted.";
 					var hash = ref.item['$$hashKey'];
@@ -263,7 +279,9 @@ function FeedCtrl($scope, $http, $rootScope) {
 	}
 
 	$scope.addNew = function() {
+		$('#SpinnerWrap').addClass('act');
 		$.post('/_api/add', $scope.newItem).then( function(result) {
+			$('#SpinnerWrap').removeClass('act');
 			if (result.data.error == 0){
 				result.data.data.contentTmp = result.data.data.content;
 				$scope.items.push(result.data.data);

@@ -7,6 +7,14 @@
     <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 </head>
 <body>
+<div id="SpinnerWrap">
+	<div id="Spinner">
+		<div class="anim spinner" style="background:#faf469;"></div>
+		<div class="anim2 spinner" style="background:#487ebd;"></div>
+		<div class="anim3 spinner"style="background:#8ecb62;"></div>	
+		<div class="anim4 spinner"style="background:#FF5E91;"></div>
+	</div>
+</div>
 <div class="login">
 <h1>Login</h1><form>
 <input type="text" name="username" class="name" placeholder="Username"/><br>
@@ -25,8 +33,10 @@
 				var pwd = $('.pwd').val();
 				if (usr.length == 0 || pwd.length == 0) {
 					$('message').html('username AND password. retard.');
-				} else {
+				} else {			
+					$('#SpinnerWrap').addClass('act');
 					$.post('/login', {username:usr, password:pwd}).done(function(d){
+						$('#SpinnerWrap').removeClass('act');
 						if (d.isAdmin) {
 							$('body').html('<h2>Successfully logged in. <a href="/">Go to the app.</a>');
 						} else {
