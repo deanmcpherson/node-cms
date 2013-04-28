@@ -48,6 +48,7 @@ app.post('/upload', routes.upload);
 app.get('/auth', routes.auth);
 app.get('/login', routes.loginForm);
 app.post('/login', routes.login);
+app.post('/newuser', routes.newuser);
 app.get('/logout', routes.logout);
 app.get('/:id', routes.static);
 

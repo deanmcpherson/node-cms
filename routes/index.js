@@ -3,10 +3,11 @@
 * GET home page.
 */
 var mongoose = require('mongoose'),
-fs = require('fs');
+fs = require('fs'),
+bcrypt = require('bcrypt');
 mongoose.connect('mongodb://localhost/test');
-var db = mongoose.connection;
-var md = require("node-markdown").Markdown;
+var db = mongoose.connection,
+md = require("node-markdown").Markdown;
 
 /**DEFINE SCHEMAS**/
 
@@ -43,6 +44,14 @@ var articleSchema = mongoose.Schema({
 
 var Article = mongoose.model('Article', articleSchema);
 var query = Article.find();
+
+var userSchema = mongoose.Schema({
+	username:String,
+	password:String
+});
+
+var User = mongoose.model('User', userSchema);
+var userQuery = User.find();
 
 function checkAuth(req, res, next) {
   if (!req.session.user_id) {
@@ -252,23 +261,64 @@ exports.remove = function(req, res){
 
 exports.login = function(req, res){
 	var post = req.body;
-	if (post.username == 'admin' && post.password == 'test') {
-		req.session.user_id = 'admin';
-		res.send({errors:0, isAdmin:true});
-	} else {
-		res.send({errors:1, isAdmin:false});
-	}
+	User.findOne({'username':post.username}).exec(function(err, user){
+		if (err) {
+			res.send({error:1, message: "Couldn't find that user."});
+			return;
+		}
+		bcrypt.compare(post.password, user.password, function(err, result){
+			if (err) {
+				res.send({error:1, message:"Incorrect password."});
+				return;
+			} 
+			req.session.user_id = post.username;
+			res.send({error:0, message:"Successfully logged in.", isAdmin:true	});
+		});
+	});
 }
 
 exports.logout = function(req, res) {
 		if (req.session.user_id !== undefined) {
 			delete req.session.user_id;
 		}
-		res.send('Logged out.');
+		res.redirect('/');
+}
+
+exports.newuser = function(req, res) {
+	var data = req.body;
+	User.find().exec(function(err, users){
+			if (!req.session.user_id && users.length !== 0) {
+				res.send({error:1, isAdmin: false, message:'Unauthorized.'});
+			} 
+			else
+			{
+				bcrypt.genSalt(10, function(err, salt) {
+					if (err){res.send({error:1, message: 'Something went wrong.'}); return; }
+				    bcrypt.hash(data.password, salt, function(err, hash) {
+				    	if (err){res.send({error:1, message: 'Something went wrong.'}); return; }
+				        data.password = hash;
+						var newUser = User(data);
+						newUser.save(function(err, resp){
+							if (err){res.send({error:1, message: 'Something went wrong.'}); return; }
+							res.send({error:0, message:'Success.'});
+						});
+				    });
+				});
+				
+			}
+		});
 }
 
 exports.loginForm = function(req, res) {
-		res.sendfile('private/login.html');
+		User.find().exec(function(err, users){
+			if (users.length === 0) {
+				res.sendfile('private/newuser.html');
+			} 
+			else
+			{
+				res.sendfile('private/login.html');
+			}
+		});
 }
 
 exports.drop = function(req, res) {

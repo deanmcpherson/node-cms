@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>Login for dean.</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="stylesheets/style.css">
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+</head>
+<body>
+<div class="login">
+<h1>New User</h1><form>
+<input type="text" name="fullname" class="fullname" placeholder="Display Name"/><br>
+<input type="text" name="username" class="name" placeholder="Username"/><br>
+<input type="password" name="password" class="pwd" placeholder="Password"/><br>
+<input type="password" name="passwordcheck" class="pwdcheck" placeholder="Password again"/><br>
+<button id="login">Submit</button><br />
+<message></message>
+</form>
+</div>
+</body>
+<footer>
+	<script>
+		$(document).ready(function(){
+			$('form').submit(function(e){
+				e.preventDefault();
+				var fullname = $('.fullname').val();
+				var usr = $('.name').val();
+				var pwd = $('.pwd').val();
+				var pwdcheck = $('.pwdcheck').val();
+				if (pwdcheck !== pwd) {
+					$('message').html('Your passwords don\'t match.');
+					return;
+				}
+				if (usr.length == 0 || pwd.length == 0 || fullname.length ==0) {
+					$('message').html('username AND password. retard.');
+				} else {
+					$.post('/newuser', {name: fullname, username:usr, password:pwd}).done(function(d){
+						if (d.error == 0) {
+							$('body').html('<h2>Successfully created user. <a href="/login">Login.</a>');
+						} else {
+							$('message').html('You got it wrong. Try again. retard.');
+						}
+					});
+				}
+			});
+		});
+	</script>
+</footer>
+</html>
