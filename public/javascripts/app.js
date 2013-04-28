@@ -330,7 +330,7 @@ function SingleCtrl($scope, $http, $rootScope, $routeParams) {
 			}
 		}
 		if (items == undefined) {
-			$scope.refreshSlug(slug, true);
+			$scope.refreshSlug(slug, false);
 		} else
 		{
 			$scope.item = item;

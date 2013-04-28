@@ -10,6 +10,10 @@ h1, h2, h3, h4, h5, h6 {
 	font-weight:400;
 }
 
+header {
+	text-align: center;
+}
+
 h1 {
 	font-size:3em;
 	line-height:1em;
@@ -41,6 +45,10 @@ textarea {
 	margin: 1em 0;
 }
 
+.admin input[type="checkbox"] {
+width: auto;
+margin: .5em;
+}
 
 img {
 	max-width:100%;
@@ -49,7 +57,7 @@ img {
 
 article {
 	clear: both;
-	height:17em;
+	height:18em;
 	overflow: hidden;
 	border-top: 1px solid #eee;
 	position: relative;

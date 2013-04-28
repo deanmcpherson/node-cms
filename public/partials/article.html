@@ -9,7 +9,7 @@
              <ul>
                 <li>Dean McPherson</li>
                 <li>{{item.date | date:"longDate"}}</li>
-                <li ng-show="item.category">    About {{item.category.join(', ')}}</li>
+                <li ng-show="item.category">About {{prepareCategories(item.category)}}</li>
              </ul>
              </div>
          </div><div class="three-quarters">
@@ -18,7 +18,7 @@
 			<div class="links">
 			Share<br/>
 			<a href="https://twitter.com/share?url=http://deanmcpherson.com/{{item.slug}}" via="@dean_mcpherson" target="_blank">Twitter</a><br>
-			<a href="https://www.linkedin.com/cws/share?url	=http://deanmcpherson.com/{{item.slug}}" target="_blank">Linked in</a><br>
+			<a href="https://www.linkedin.com/cws/share?url=http://deanmcpherson.com/{{item.slug}}" target="_blank">LinkedIn</a><br>
 			<a ng-click="FB_Share(item)">Facebook</a>
 			</div>
         </div>

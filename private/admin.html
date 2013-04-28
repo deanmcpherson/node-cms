@@ -22,6 +22,8 @@
              <span ng-show="adding">
             <input type='text' ng-model='newItem.name' placeholder="name"/><br />
             <input type='text'  ng-model='newItem.category'  placeholder="category"/><br />
+			Hidden? <input type="checkbox" ng-model='newItem.hidden'><br />
+			Feature Article? <input type="checkbox" ng-nodel='newItem.featured'><br />
             <markdown cont="newItem.content"></markdown>
             <textarea x-editor ng-model="newItem.contentTmp" placeholder="Write your post in markdown here..."></textarea>
              <div class="btn" ng-hide="newItem.imageFlag" ng-click="imageFlag(true, newItem)">Uploads</div>
@@ -51,7 +53,8 @@
 			<message>{{item.message}}</message>
          </span>
         </article>
-        <article class="panel single row" ng-repeat="item in items | orderBy:'_id':true"  >
+		<input type="textbox" ng-model="search.name" placeholder="Search"/>
+        <article class="panel single row" ng-repeat="item in items | orderBy:'_id':true | filter:search">
 				   <div class="one-quarter">
 						<div class="meta">
 					 <div class="featuredImage">
@@ -76,6 +79,8 @@
 				 <markdown cont="item.content" class="previewBox"></markdown>
 				 <input type='text' ng-model='item.name' placeholder="name"/><br />
 				<input type='text'  ng-model='item.category'  placeholder="category"/><br />
+				<label>Hidden?</label><input type="checkbox" ng-model='item.hidden'><br />
+				<label>Feature Article?</label><input type="checkbox" ng-nodel='item.featured'><br />
                 <textarea x-editor ng-model="item.contentTmp"></textarea>
 				<div class="btn" ng-hide="item.imageFlag" ng-click="imageFlag(true)">Uploads</div>
                  <div class="files" ng-show="item.imageFlag">

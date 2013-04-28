@@ -21,7 +21,7 @@ app.configure(function(){
   app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
-  app.use(express.favicon());
+  app.use(express.favicon(__dirname + '/public/images/favicon.ico'));
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
@@ -48,7 +48,7 @@ app.post('/upload', routes.upload);
 app.get('/auth', routes.auth);
 app.get('/login', routes.loginForm);
 app.post('/login', routes.login);
-app.post('/newuser', routes.newuser);
+app.post('/newuser', routes.newuser); 
 app.get('/logout', routes.logout);
 app.get('/:id', routes.static);
 

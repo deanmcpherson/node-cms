@@ -5,6 +5,7 @@
 var mongoose = require('mongoose'),
 fs = require('fs'),
 bcrypt = require('bcrypt');
+
 mongoose.connect('mongodb://localhost/test');
 var db = mongoose.connection,
 md = require("node-markdown").Markdown;
@@ -39,6 +40,7 @@ var articleSchema = mongoose.Schema({
 	content: String,
 	featureImage: String,
 	hidden: Boolean,
+	featured: Boolean,
 	category:[String]
 });
 
@@ -208,7 +210,14 @@ exports.update = function(req, res){
 					docs[x] = data[x];
 				}
 				docs['slug'] = convertToSlug(data.name);
+				if (docs['hidden'] == undefined){
+					docs['hidden'] = false;
+				}
 				
+				if (docs['featured'] == undefined){
+					docs['featured'] = false;
+				}
+
 				docs['lastModified'] = Date.now();
 				docs.save(function(err) {
 					if (err) {
@@ -267,12 +276,12 @@ exports.login = function(req, res){
 			return;
 		}
 		bcrypt.compare(post.password, user.password, function(err, result){
-			if (err) {
+			if (err || !result) {
 				res.send({error:1, message:"Incorrect password."});
 				return;
 			} 
 			req.session.user_id = post.username;
-			res.send({error:0, message:"Successfully logged in.", isAdmin:true	});
+			res.send({error:0, message:"Successfully logged in.", isAdmin:true});
 		});
 	});
 }
