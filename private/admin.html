@@ -25,7 +25,7 @@
 <a href="/logout" style="position: absolute; top:0; right:0; padding:1em;">Logout</a>
     <div id="list" class="admin" ng-controller="FeedCtrl">
         <h1 style="text-align:center;">Admin</h1>
-        <article class="new-panel single row" ng-show="isAdmin">
+        <article class="new-panel single row">
             <div ng-click="addMode(true)" ng-hide="adding" class="btn add">Add a new post</div>
              <div ng-click="addMode(false)" ng-show="adding"  class="btn quit">Quit</div>
              <span ng-show="adding">
@@ -80,11 +80,11 @@
 				 <div class="three-quarters">
          <h1>{{item.name}}</h1>
 			<span ng-hide="item.edit">
-                <div ng-show="isAdmin" ng-click="editMode(item, true)"  class="btn edit">Edit</div>
-                <div ng-click="remove()" ng-show="isAdmin"  class="btn delete">Delete</div>
+                <div ng-click="editMode(item, true)"  class="btn edit">Edit</div>
+                <div ng-click="remove()" class="btn delete">Delete</div>
             </span>
             <span ng-show="item.edit">
-                <div ng-show="isAdmin" ng-click="editMode(item, false)"  class="btn close">Close</div>
+                <div ng-click="editMode(item, false)"  class="btn close">Close</div>
 				 <markdown cont="item.content" class="previewBox"></markdown>
 				 <input type='text' ng-model='item.name' placeholder="name"/><br />
 				<input type='text'  ng-model='item.category'  placeholder="category"/><br />
@@ -114,7 +114,7 @@
                 </ul>
             </div>
 			<div ng-click="copyContent(item)" class="btn preview">Preview</div>
-                <div ng-click="save()" ng-show="isAdmin"  class="btn save">Save</div>
+                <div ng-click="save()" class="btn save">Save</div>
             </span>
 			</div>
     </article>
