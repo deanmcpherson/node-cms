@@ -53,7 +53,7 @@
 			<message>{{item.message}}</message>
          </span>
         </article>
-		<input type="textbox" ng-model="search.name" placeholder="Search"/>
+		<div class="row"><input type="textbox" ng-model="search.name" placeholder="Search"/></div>
         <article class="panel single row" ng-repeat="item in items | orderBy:'_id':true | filter:search">
 				   <div class="one-quarter">
 						<div class="meta">

@@ -1,14 +1,14 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-	<title>Login for dean.</title>
+	<title>Login</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" href="stylesheets/style.css">
     <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 </head>
 <body>
 <div class="login">
-<h1>Login</h1><form style="display:none;">
+<h1>Login</h1><form>
 <input type="text" name="username" class="name" placeholder="Username"/><br>
 <input type="password" name="password" class="pwd" placeholder="Password"/><br>
 <button id="login">Submit</button><br />
@@ -19,14 +19,6 @@
 <footer>
 	<script>
 		$(document).ready(function(){
-			$.get('/auth').done(function(d){
-				if (d.isAdmin){
-					$('body').html('<h2>You\'re already logged in.</h2>');
-				} else
-				{
-					$('form').show();
-				}
-			});
 			$('form').submit(function(e){
 				e.preventDefault();
 				var usr = $('.name').val();

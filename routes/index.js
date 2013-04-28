@@ -319,6 +319,7 @@ exports.newuser = function(req, res) {
 }
 
 exports.loginForm = function(req, res) {
+	 if (!req.session.user_id) {
 		User.find().exec(function(err, users){
 			if (users.length === 0) {
 				res.sendfile('private/newuser.html');
@@ -328,6 +329,9 @@ exports.loginForm = function(req, res) {
 				res.sendfile('private/login.html');
 			}
 		});
+	} else {
+		res.redirect('/');
+	}
 }
 
 exports.drop = function(req, res) {
