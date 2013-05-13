@@ -201,27 +201,29 @@ message:empty { display: none; }
 }
 
  .meta.act .featuredImage {
-	height: 150px;
-	width: 150px;
+	-webkit-transform: scale(1.2);
+	-moz-transform: scale(1.2);
+	-ms-transform: scale(1.2);
+	-o-transform: scale(1.2);
+	transform: scale(1.2);
 	top: 26px;
 	z-index: 3;
-	background-color: #4AD4FF;
 }
-.meta:hover  .featuredImage{
-	background-color: #FFC200 !important;
+.meta:hover  .featuredImageInner{
+	border: 5px solid #FFC200 !important;
 }
 
 .featuredImageInner {
-	margin-left: 5%;
-	margin-top: 5%;
-	width: 90%;
-	height:90%;
+	width: 100%;
+	height:100%;
 	overflow: hidden;
 	-webkit-border-radius: 50%;
 	-moz-border-radius: 50%;
 	border-radius: 50%;
 	box-sizing:border-box;
 	background-size: cover;
+	border: 5px solid #4AD4FF;
+	-webkit-transition: all 1s;
 }
 
 .imageBorder {
